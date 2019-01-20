@@ -4,9 +4,10 @@ import requests
 import json
 from urllib.request import urlopen
 import bs4
+import re
 
 os.system("title Xequinox's Soundcloud Downloader");
-Version = 1.1
+Version = 1.2
 LatestVer = requests.get('https://pastebin.com/raw/QDzApaBF').text
 DownloadLink = requests.get('https://pastebin.com/raw/BbTKyDni').text
 
@@ -32,7 +33,9 @@ def getDlUrl(TrackId):
 
 def saveFile(name,url,dest):
     os.system("cls")
-    print("Downloading: "+name)
+    keep = (' ','.','_','(',')','\\','/','-')
+    dest = "".join(c for c in dest if c.isalnum() or c in keep).rstrip()
+    print("Downloading: " + name)
     mp3file = urlopen(url)
     with open(dest,'wb') as output:
       output.write(mp3file.read())
