@@ -6,8 +6,8 @@ from urllib.request import urlopen
 import bs4
 import re
 from time import sleep
-os.system("title Xequinox's Soundcloud Downloader");
-Version = 1.5
+Version = 1.6
+os.system("title Xequinox's Soundcloud Downloader ["+str(Version)+"]");
 clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
 LatestVer = requests.get('https://pastebin.com/raw/QDzApaBF').text
 DownloadLink = requests.get('https://pastebin.com/raw/BbTKyDni').text
@@ -52,9 +52,8 @@ def saveFile(name,url,dest,filename):
         print("Finished Downloading: "+name)
     except:
         print("Error Downloading: " + name + " || Waiting 10 Seconds And Trying Again.")
-        time.sleep(10)
+        sleep(10)
         saveFile(rawName,rawUrl,rawDest,rawFilename)
-        input("Finished All Downloads, Press Any Key To Continue.\n")
     return
 
 
