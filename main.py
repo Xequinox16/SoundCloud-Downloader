@@ -5,8 +5,9 @@ import json
 from urllib.request import urlopen
 import bs4
 import re
+from time import sleep
 os.system("title Xequinox's Soundcloud Downloader");
-Version = 1.4
+Version = 1.5
 clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
 LatestVer = requests.get('https://pastebin.com/raw/QDzApaBF').text
 DownloadLink = requests.get('https://pastebin.com/raw/BbTKyDni').text
@@ -103,7 +104,7 @@ def TrackURL():
     print("Author: " + Author)
     if not os.path.isdir("Downloads/"):
         os.mkdir("Downloads/")
-    saveFile(Title,getDlUrl(TrackId),"Downloads/", title + ".mp3")
+    saveFile(Title,getDlUrl(TrackId),"Downloads/", Title + ".mp3")
     input("Finished All Downloads, Press Any Key To Continue.\n")
     menu()
 
