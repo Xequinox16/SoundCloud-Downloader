@@ -5,9 +5,9 @@ import json
 from urllib.request import urlopen
 import bs4
 import re
-
 os.system("title Xequinox's Soundcloud Downloader");
-Version = 1.3
+Version = 1.4
+clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
 LatestVer = requests.get('https://pastebin.com/raw/QDzApaBF').text
 DownloadLink = requests.get('https://pastebin.com/raw/BbTKyDni').text
 
@@ -19,7 +19,6 @@ if float(LatestVer) > Version:
     input("\nPress any key to continue.\n")
 
 
-clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
 def getDlUrl(TrackId):
     try:
         response = requests.get('https://api.soundcloud.com/i1/tracks/' + TrackId + '/streams?client_id=' + clientid)
@@ -32,16 +31,29 @@ def getDlUrl(TrackId):
 
 
 def saveFile(name,url,dest,filename):
+    rawName = name
+    rawUrl = url
+    rawDest = dest
+    rawFilename = filename
     keep = (' ','.','_','(',')','\\','/','-')
     dest = "".join(c for c in dest if c.isalnum() or c in keep).rstrip()
     keep = (' ','.','_','(',')','-')
     filename = "".join(c for c in filename if c.isalnum() or c in keep).rstrip()
     dest = dest + filename
-    print("Downloading: " + name)
-    mp3file = urlopen(url)
-    with open(dest,'wb') as output:
-      output.write(mp3file.read())
-    print("Finished Downloading: "+name)
+    if os.path.isfile(dest):
+        print("Track: "+name+" Already Exists.")
+        return
+    try:
+        print("Downloading: " + name)
+        mp3file = urlopen(url)
+        with open(dest,'wb') as output:
+          output.write(mp3file.read())
+        print("Finished Downloading: "+name)
+    except:
+        print("Error Downloading: " + name + " || Waiting 10 Seconds And Trying Again.")
+        time.sleep(10)
+        saveFile(rawName,rawUrl,rawDest,rawFilename)
+        input("Finished All Downloads, Press Any Key To Continue.\n")
     return
 
 
@@ -61,6 +73,7 @@ def PlaylistURL():
     for i in range(0,len(json.loads(response.text)['tracks'])):
         title = json.loads(response.text)['tracks'][i]['title']
         saveFile(title,getDlUrl(str(json.loads(response.text)['tracks'][i]['id'])),"Downloads/" + PlaylistName + "/", title + ".mp3")
+    input("Finished All Downloads, Press Any Key To Continue.\n")
     menu()
 
 
@@ -91,7 +104,7 @@ def TrackURL():
     if not os.path.isdir("Downloads/"):
         os.mkdir("Downloads/")
     saveFile(Title,getDlUrl(TrackId),"Downloads/", title + ".mp3")
-    input("Finished!, press any key to continue to the menu.")
+    input("Finished All Downloads, Press Any Key To Continue.\n")
     menu()
 
 
