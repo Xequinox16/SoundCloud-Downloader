@@ -6,12 +6,12 @@ from urllib.request import urlopen
 import bs4
 
 os.system("title Xequinox's Soundcloud Downloader");
-Version = 1
+Version = 1.1
 LatestVer = requests.get('https://pastebin.com/raw/QDzApaBF').text
 DownloadLink = requests.get('https://pastebin.com/raw/BbTKyDni').text
 
 
-if int(LatestVer) > Version:
+if float(LatestVer) > Version:
     print("Current Version: " + str(Version))
     print("Latest Version: " + str(LatestVer))
     print("Download Link: "+ str(DownloadLink))
@@ -49,6 +49,8 @@ def PlaylistURL():
     PlaylistID = (str(metas[30]).split("\"")[1])[23:len(str(metas[30]).split("\"")[1])]
     response = requests.get("http://api.soundcloud.com/playlists/"+PlaylistID+"?client_id="+clientid)
     PlaylistName = json.loads(response.text)['title']
+    if not os.path.isdir("Downloads/"):
+        os.mkdir("Downloads/")
     if not os.path.isdir("Downloads/"+PlaylistName):
         os.mkdir("Downloads/"+PlaylistName)
     for i in range(0,len(json.loads(response.text)['tracks'])):
