@@ -6,7 +6,9 @@ from urllib.request import urlopen
 import bs4
 import re
 from time import sleep
-Version = 1.6
+
+
+Version = 1.7
 os.system("title Xequinox's Soundcloud Downloader ["+str(Version)+"]");
 clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
 LatestVer = requests.get('https://pastebin.com/raw/QDzApaBF').text
@@ -31,12 +33,13 @@ def getDlUrl(TrackId):
     return downloadUrl
 
 
-def saveFile(name,url,dest,filename):
+def saveFile(name,author,url,dest,filename,id3):
     rawName = name
+    rawAuthor = author
     rawUrl = url
     rawDest = dest
     rawFilename = filename
-    keep = (' ','.','_','(',')','\\','/','-')
+    keep = (' ','.','_','(',')','/','-')
     dest = "".join(c for c in dest if c.isalnum() or c in keep).rstrip()
     keep = (' ','.','_','(',')','-')
     filename = "".join(c for c in filename if c.isalnum() or c in keep).rstrip()
@@ -53,26 +56,41 @@ def saveFile(name,url,dest,filename):
     except:
         print("Error Downloading: " + name + " || Waiting 10 Seconds And Trying Again.")
         sleep(10)
-        saveFile(rawName,rawUrl,rawDest,rawFilename)
+        saveFile(rawName,rawAuthor,rawUrl,rawDest,rawFilename)
+    if id3 == True:
+        ## FIX ID3
+        pass
     return
 
 
 def PlaylistURL():
     os.system("cls")
     x = input("Enter A Playlist Url: ")
+    os.system("cls")
+    useID3 = input("Do You Want To Use ID3 Tags? [Y/N]: ")
+    os.system("cls")
+    if useID3[0].lower() == "y":
+        useID3 = True
+    elif useID3[0].lower() == "n":
+        useID3 = False
+    else:
+        print("Unknown Option, Options: 'y', 'n', 'yes', 'no'")
+        input("Press Any Key To Continue.\n")
+        PlaylistURL()
     response = requests.get(x)
     soup = bs4.BeautifulSoup(response.text,"html.parser")
     metas = soup.select("meta")
     PlaylistID = (str(metas[30]).split("\"")[1])[23:len(str(metas[30]).split("\"")[1])]
     response = requests.get("http://api.soundcloud.com/playlists/"+PlaylistID+"?client_id="+clientid)
     PlaylistName = json.loads(response.text)['title']
+    Author = (json.loads(response.text)['user']['username'])
     if not os.path.isdir("Downloads/"):
         os.mkdir("Downloads/")
     if not os.path.isdir("Downloads/"+PlaylistName):
         os.mkdir("Downloads/"+PlaylistName)
     for i in range(0,len(json.loads(response.text)['tracks'])):
         title = json.loads(response.text)['tracks'][i]['title']
-        saveFile(title,getDlUrl(str(json.loads(response.text)['tracks'][i]['id'])),"Downloads/" + PlaylistName + "/", title + ".mp3")
+        saveFile(title,Author,getDlUrl(str(json.loads(response.text)['tracks'][i]['id'])),"Downloads/" + PlaylistName + "/", title + ".mp3",useID3)
     input("Finished All Downloads, Press Any Key To Continue.\n")
     menu()
 
@@ -80,6 +98,17 @@ def PlaylistURL():
 def TrackURL():
     os.system("cls")
     x = input("Enter A Track Url: ")
+    os.system("cls")
+    useID3 = input("Do You Want To Use ID3 Tags? [Y/N]: ")
+    os.system("cls")
+    if useID3[0].lower() == "y":
+        useID3 = True
+    elif useID3[0].lower() == "n":
+        useID3 = False
+    else:
+        print("Unknown Option, Options: 'y', 'n', 'yes', 'no'")
+        input("Press Any Key To Continue.\n")
+        PlaylistURL()
     os.system("cls")
     print("Loading...")
     try:
@@ -103,7 +132,7 @@ def TrackURL():
     print("Author: " + Author)
     if not os.path.isdir("Downloads/"):
         os.mkdir("Downloads/")
-    saveFile(Title,getDlUrl(TrackId),"Downloads/", Title + ".mp3")
+    saveFile(Title,Author,getDlUrl(TrackId),"Downloads/", Title + ".mp3",useID3)
     input("Finished All Downloads, Press Any Key To Continue.\n")
     menu()
 
