@@ -8,7 +8,7 @@ import re
 from time import sleep
 
 
-Version = 1.7
+Version = 1.71
 os.system("title Xequinox's Soundcloud Downloader ["+str(Version)+"]");
 clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
 LatestVer = requests.get('https://pastebin.com/raw/QDzApaBF').text
@@ -16,6 +16,9 @@ DownloadLink = requests.get('https://pastebin.com/raw/BbTKyDni').text
 
 
 if float(LatestVer) > Version:
+    print("#"*30)
+    print("       UPDATE AVAILABLE")
+    print("#"*30)
     print("Current Version: " + str(Version))
     print("Latest Version: " + str(LatestVer))
     print("Download Link: "+ str(DownloadLink))
