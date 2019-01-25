@@ -8,7 +8,8 @@ import re
 from time import sleep
 
 
-Version = 1.71
+Version = 1.8
+Debug = False
 os.system("title Xequinox's Soundcloud Downloader ["+str(Version)+"]");
 clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
 LatestVer = requests.get('https://pastebin.com/raw/QDzApaBF').text
@@ -26,22 +27,28 @@ if float(LatestVer) > Version:
 
 
 def getDlUrl(TrackId):
+    downloadUrl = None
     try:
         response = requests.get('https://api.soundcloud.com/i1/tracks/' + TrackId + '/streams?client_id=' + clientid)
         downloadUrl = json.loads(response.text)['http_mp3_128_url']
     except:
-        print("[Error] - GetDlUrl")
-        input("Press any key to return.\n")
-        menu()
+        if Debug:
+            print("[Error] - GetDlUrl")
+            input("Press any key to continue.\n")
+        else:
+            pass
     return downloadUrl
 
 
-def saveFile(name,author,url,dest,filename,id3):
+def saveFile(name,author,url,dest,filename,id3,Try=1):
+    Failed = False
+    maxTries = 3
     rawName = name
     rawAuthor = author
     rawUrl = url
     rawDest = dest
     rawFilename = filename
+    rawID3 = id3
     keep = (' ','.','_','(',')','/','-')
     dest = "".join(c for c in dest if c.isalnum() or c in keep).rstrip()
     keep = (' ','.','_','(',')','-')
@@ -57,10 +64,15 @@ def saveFile(name,author,url,dest,filename,id3):
           output.write(mp3file.read())
         print("Finished Downloading: "+name)
     except:
-        print("Error Downloading: " + name + " || Waiting 10 Seconds And Trying Again.")
-        sleep(10)
-        saveFile(rawName,rawAuthor,rawUrl,rawDest,rawFilename)
-    if id3 == True:
+        if Try < (maxTries + 1):
+            print("Error Downloading: " + name + " || Waiting 10 Seconds And Trying Again." + " [" + str(Try) + "/" + str(maxTries) + "]")
+            sleep(10)
+            saveFile(rawName,rawAuthor,rawUrl,rawDest,rawFilename,rawID3,Try+1)
+        else:
+            Failed = True
+            print("Failed To Download: " + name + "After " + maxTries + "Tries" + ", Skipping It.")
+            pass
+    if id3 == True and Failed == False:
         ## FIX ID3
         pass
     return
@@ -121,10 +133,12 @@ def TrackURL():
         metas = soup.select("meta")
         TrackId = str(metas[30]).split("\"")[1][20:len(str(metas[30]).split("\"")[1])]
     except:
-        os.system("cls")
-        print("[Error] - TrackURL")
-        input("Press any key to return.\n")
-        TrackURL()
+        if Debug:
+            print("[Error] - TrackURL")
+            input("Press any key to return.\n")
+            TrackURL()
+        else:
+            TrackURL()
     links = soup.select('link')
     link = str(links[17])[12:61]
     Author = str(metas[63]).split("\"")[1]
