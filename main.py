@@ -8,7 +8,7 @@ import re
 from time import sleep
 
 
-Version = 1.81
+Version = 1.82
 Debug = False
 os.system("title Xequinox's Soundcloud Downloader ["+str(Version)+"]");
 clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
@@ -70,9 +70,7 @@ def saveFile(name,author,url,dest,filename,id3,Try=1):
         with open(dest,'wb') as output:
           output.write(mp3file.read())
         print("Finished Downloading: "+name)
-    except Exception as e:
-        print(e)
-        input()
+    except:
         if Try < (maxTries + 1):
             print("Error Downloading: " + name + " || Waiting 10 Seconds And Trying Again." + " [" + str(Try) + "/" + str(maxTries) + "]")
             sleep(10)
