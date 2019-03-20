@@ -8,7 +8,7 @@ import re
 from time import sleep
 
 
-Version = 1.8
+Version = 1.81
 Debug = False
 os.system("title Xequinox's Soundcloud Downloader ["+str(Version)+"]");
 clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
@@ -53,17 +53,26 @@ def saveFile(name,author,url,dest,filename,id3,Try=1):
     dest = "".join(c for c in dest if c.isalnum() or c in keep).rstrip()
     keep = (' ','.','_','(',')','-')
     filename = "".join(c for c in filename if c.isalnum() or c in keep).rstrip()
+    if filename[0:-4] == "":
+        filename = input("Invalid Parsed File Name, Please Choose A New Name.")
+        filename = "".join(c for c in filename if c.isalnum() or c in keep).rstrip()
+        if filename == "":
+            saveFile(rawName,rawAuthor,rawUrl,rawDest,rawFilename,rawID3)
+        else:
+            filename = filename + ".mp3"
     dest = dest + filename
     if os.path.isfile(dest):
         print("Track: "+name+" Already Exists.")
         return
     try:
-        print("Downloading: " + name)
+        print("Downloading: " + name + " as " + filename[0:-4])
         mp3file = urlopen(url)
         with open(dest,'wb') as output:
           output.write(mp3file.read())
         print("Finished Downloading: "+name)
-    except:
+    except Exception as e:
+        print(e)
+        input()
         if Try < (maxTries + 1):
             print("Error Downloading: " + name + " || Waiting 10 Seconds And Trying Again." + " [" + str(Try) + "/" + str(maxTries) + "]")
             sleep(10)
