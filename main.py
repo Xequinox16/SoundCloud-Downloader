@@ -5,16 +5,31 @@ import json
 from urllib.request import urlopen
 import bs4
 import re
+import platform as Plat
 from time import sleep
 
 
-Version = 1.82
+OpSys = (Plat.system())
+Version = 1.9
 Debug = False
-os.system("title Xequinox's Soundcloud Downloader ["+str(Version)+"]");
+if OpSys == "Windows":
+    os.system("title Xequinox's Soundcloud Downloader [" + str(Version) + "]");
 clientid = "tgoEjKtQsCqtiffoqeHxtnND4Lx7zBqV"
 LatestVer = requests.get('https://pastebin.com/raw/QDzApaBF').text
 DownloadLink = requests.get('https://pastebin.com/raw/BbTKyDni').text
 
+
+def clearScreen():
+    if OpSys != "Windows":
+        try:
+            os.system("clear")
+        except:
+            pass
+    else:
+        try:
+            os.system("cls")
+        except:
+            pass
 
 if float(LatestVer) > Version:
     print("#"*30)
@@ -86,11 +101,11 @@ def saveFile(name,author,url,dest,filename,id3,Try=1):
 
 
 def PlaylistURL():
-    os.system("cls")
+    clearScreen()
     x = input("Enter A Playlist Url: ")
-    os.system("cls")
+    clearScreen()
     useID3 = input("Do You Want To Use ID3 Tags? [Y/N]: ")
-    os.system("cls")
+    clearScreen()
     if useID3[0].lower() == "y":
         useID3 = True
     elif useID3[0].lower() == "n":
@@ -118,11 +133,11 @@ def PlaylistURL():
 
 
 def TrackURL():
-    os.system("cls")
+    clearScreen()
     x = input("Enter A Track Url: ")
-    os.system("cls")
+    clearScreen()
     useID3 = input("Do You Want To Use ID3 Tags? [Y/N]: ")
-    os.system("cls")
+    clearScreen()
     if useID3[0].lower() == "y":
         useID3 = True
     elif useID3[0].lower() == "n":
@@ -131,7 +146,7 @@ def TrackURL():
         print("Unknown Option, Options: 'y', 'n', 'yes', 'no'")
         input("Press Any Key To Continue.\n")
         PlaylistURL()
-    os.system("cls")
+    clearScreen()
     print("Loading...")
     try:
         response = requests.get(x)
@@ -150,7 +165,7 @@ def TrackURL():
     link = str(links[17])[12:61]
     Author = str(metas[63]).split("\"")[1]
     Title = str(metas[38]).split("\"")[1]
-    os.system("cls")
+    clearScreen()
     print("TrackId: " + TrackId)
     print("Title: " + Title)
     print("Author: " + Author)
@@ -162,7 +177,7 @@ def TrackURL():
 
 
 def menu():
-    os.system("cls")
+    clearScreen()
     print("Xequinox's Soundcloud Downloader")
     print("#"*35)
     print("[1] - Download Playlist From Url")
