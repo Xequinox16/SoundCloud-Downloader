@@ -7,10 +7,11 @@ import bs4
 import re
 import platform as Plat
 from time import sleep
-
+import mutagen
+from mutagen.easyid3 import EasyID3
 
 OpSys = (Plat.system())
-Version = 1.9
+Version = 2.0
 Debug = False
 if OpSys == "Windows":
     os.system("title Xequinox's Soundcloud Downloader [" + str(Version) + "]");
@@ -95,8 +96,14 @@ def saveFile(name,author,url,dest,filename,id3,Try=1):
             print("Failed To Download: " + name + "After " + maxTries + "Tries" + ", Skipping It.")
             pass
     if id3 == True and Failed == False:
-        ## FIX ID3
-        pass
+        try:
+            meta = EasyID3(dest)
+        except mutagen.id3.ID3NoHeaderError:
+            meta = mutagen.File(dest, easy=True)
+            meta.add_tags()
+        meta['title'] = rawName
+        meta['artist'] = rawAuthor
+        meta.save(dest, v1=2)
     return
 
 
