@@ -11,7 +11,7 @@ import mutagen
 from mutagen.easyid3 import EasyID3
 
 OpSys = (Plat.system())
-Version = 2.0
+Version = 2.1
 Debug = False
 if OpSys == "Windows":
     os.system("title Xequinox's Soundcloud Downloader [" + str(Version) + "]");
@@ -47,9 +47,9 @@ def getDlUrl(TrackId):
     try:
         response = requests.get('https://api.soundcloud.com/i1/tracks/' + TrackId + '/streams?client_id=' + clientid)
         downloadUrl = json.loads(response.text)['http_mp3_128_url']
-    except:
+    except Exception as e:
         if Debug:
-            print("[Error] - GetDlUrl")
+            print("[Error] - GetDlUrl, \'" + e + "\'")
             input("Press any key to continue.\n")
         else:
             pass
@@ -86,14 +86,17 @@ def saveFile(name,author,url,dest,filename,id3,Try=1):
         with open(dest,'wb') as output:
           output.write(mp3file.read())
         print("Finished Downloading: "+name)
-    except:
+    except Exception as e:
+        if Debug:
+            print("[Error] - SaveFile, \'" + e + "\'")
+            input("Press any key to continue.\n")
         if Try < (maxTries + 1):
             print("Error Downloading: " + name + " || Waiting 10 Seconds And Trying Again." + " [" + str(Try) + "/" + str(maxTries) + "]")
             sleep(10)
             saveFile(rawName,rawAuthor,rawUrl,rawDest,rawFilename,rawID3,Try+1)
         else:
             Failed = True
-            print("Failed To Download: " + name + "After " + maxTries + "Tries" + ", Skipping It.")
+            print("Failed To Download: " + name + "After " + str(maxTries) + " Tries" + ", Skipping It.")
             pass
     if id3 == True and Failed == False:
         try:
